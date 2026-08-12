@@ -1,0 +1,6 @@
+interface:
+  display_name: "演示文稿提示词系统"
+  short_description: "把PPT需求整理成设计规范和生图提示词"
+  default_prompt: "使用 $keynote-prompt-system，把这份PPT需求整理为内容简报、设计系统和逐页 Image2 提示词。"
+policy:
+  allow_implicit_invocation: true
