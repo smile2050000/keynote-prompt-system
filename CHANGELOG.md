@@ -2,6 +2,16 @@
 
 ## 未发布
 
+- 收敛 v0.8 规则结构：`SKILL.md` 只保留流程，`style-presets.md` 只负责 Deck 级风格，`type-and-visual-grammar.md` 只负责信息页语法，`prompt-schema.md` 只负责 Prompt 组装。
+- 删除核心规则中的项目专属产品路径、Butler/Captain/Guard 示例和测试数据，统一由项目 `content-brief.md` 与 `prompt-pack.md` 承担。
+- 修复深浅背景文字颜色冲突、标题结构命名不一致和“缺失内容发送待确认”等执行风险。
+- 将重复负面约束压缩为少量最高风险类别，保留已验证的通透背景、自然文字安全区、语义视觉载体和背景/排版解耦原则。
+
+- v0.8 新增 Style Lock：每套 Deck 只激活一个 `style_id`，默认禁止跨页混搭。
+- v0.8 将 B 收敛为 `warm-home-editorial-dark`：A 暖白家居情绪的深色主题变体，严格继承浅色版版式和图形逻辑。
+- v0.8 明确禁止 B 通过黑色异形块、黑色中轴、黑色金属和硬分割表达风格。
+- C 风格改为 `designed-keynote-stage`，先完成小米发布会参考文件第二轮提取，暂不直接测试。
+
 - 重构为 V1 短链路：Deck Plan、Global Visual Contract、Page Type、Per-page Prompt、Image2、contact sheet review。
 - Page Type 只定义信息意图，不再承担固定布局；移除 V1 默认流程中的多层视觉逻辑拼装。
 - 新增逐页真实执行日志要求，保存 Prompt、Reference、调用参数、模型和输出结果。
