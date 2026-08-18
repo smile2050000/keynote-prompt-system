@@ -1,108 +1,125 @@
 ---
 name: keynote-prompt-system
-description: 将 txt、md、html、docx、pdf、pptx、截图或其他文本需求整理为 PPT 内容简报、家用智能产品视觉系统和逐页 Image2 提示词；用户确认后才进入生图执行。
+description: 将 txt、md、html、docx、pdf、pptx、截图等单一主要需求整理为整套 PPT Deck Plan、精简视觉系统和逐页 Image2 Prompt；用户确认后可调用 Image2 生成视觉稿并制作整套预览。
 ---
 
-# 演示文稿提示词系统
+# Keynote Prompt System V1
 
-本 Skill 负责“需求理解 + 设计规范 + Image2 提示词规划”。默认不调用生图 MCP，也不替代 `image2` 和 `slides` Skill。
+目标：用少量稳定约束、准确内容和正确 Reference，生成统一且可修正的发布会 PPT 视觉稿。V1 暂不解决可编辑文字、完整母版库或自动视觉校准。
 
-## 标准产出
+## 固定产出
 
-固定产出三个文件：
+1. `content-brief.md`：整套叙事、逐页内容与事实来源。
+2. `design-system.md`：8–12 条 Global Visual Contract 与唯一 `style_id`。
+3. `prompt-pack.md`：逐页最终 Prompt、Reference 路由与调用参数。
 
-1. `content-brief.md`：内容、叙事顺序、逐页核心结论和待确认项。
-2. `design-system.md`：选定的家用智能产品视觉系统、页面家族和必要设计参数。
-3. `prompt-pack.md`：全局提示词、页面家族提示词和逐页 Image2 提示词。
+执行阶段另产出：
 
-只有用户明确要求比较多个方向时，才产出 `direction-options.md`。
+- `execution-log.md`：真实调用、结果和单变量修正记录；
+- `montage-all.png`：按页码完整展示全部页面；
+- `deck-preview.pptx`：每页一张整页图片铺满的预览文件。
 
 ## 工作流程
 
-### 1. 读取一个主要需求文件
+### 1. 读取需求
 
-支持 `txt`、`md`、`html`、`docx`、`pdf`、`pptx`、截图和其他可读取文本格式。默认只处理一个主要需求文件；其他文件只有在用户明确说明为参考材料时才参与。
+默认处理一个主要需求文件。其他文件只有在用户明确指定为参考时才参与。
 
 来源优先级：
 
 ```text
-用户明确说明 > 需求正文 > 文档事实和数据 > 参考材料结构 > Skill 默认规则
+用户明确说明 > 需求正文 > 已核验事实 > 参考材料 > Skill 默认规则
 ```
 
-参考 PPT/PDF 默认只用于理解结构和说明方式，不复制视觉样式，除非用户明确要求复现。
+参考发布会只用于学习叙事、节奏和审美逻辑，不复制具体页面。
 
-### 2. 确认闸门
+### 2. 确认关键缺失
 
-遇到以下情况先向用户确认，不继续猜测：
+页数、受众、产品与数据事实、浅色/深色方向、参考材料用途、产品资产、交付格式或生图方式不明确时，先确认。不得猜测参数、排名、身份、业务主张或 Logo。
 
-- 页数、内容顺序或主要目标不明确；
-- 产品名、数据、参数或业务主张冲突；
-- 不清楚是否要求整页生图、是否允许后期排字；
-- 不清楚参考文件是参考结构、参考风格还是 1:1 复现；
-- 品牌色、人物身份、产品形态或发布场景存在关键缺失。
+### 3. 生成 Deck Plan
 
-非关键细节可标记为“待确认”后继续，但不得把推测写成事实。
+一次性规划整套，不逐页边生成边决定。每页只记录：
 
-### 3. 产出内容简报
+- 一个核心信息与必须保留的事实；
+- Page Type 与信息密度；
+- 第一视觉对象和内容关系；
+- 人物、产品或 Style Reference；
+- 从 [title-structure.md](references/title-structure.md) 选择的标题结构；
+- 与前后页的视觉节奏。
 
-每页只记录：叙事作用、一个核心结论、第一视觉焦点、必须出现的文字/数据、支撑场景或证据、仅适合演讲稿的内容、来源和待确认项。长段内容压缩为短句，但不改变事实。
+Page Type 读取 [page-families.md](references/page-families.md)，它只定义页面意图，不规定固定母版。
 
-### 4. 选择家用智能产品视觉系统
+### 4. 生成 Global Visual Contract
 
-先在 `references/palette-systems.md` 中选择浅色或深色基础版，再选择一个气质变体：温暖家居、浅紫典雅、年轻生活或中性新品。用户已有品牌规范或明确颜色时优先使用用户指定颜色。
+先从 [style-presets.md](references/style-presets.md) 选择一个风格，并声明：
 
-一套 PPT 不混用多个完整变体；只允许场景摄影和产品展陈有轻微处理差异。无法判断浅色/深色或产品气质时先询问用户。
+```yaml
+style_id: [唯一风格 ID]
+style_scope: whole-deck
+style_mix: forbidden
+```
 
-### 5. 按阅读任务选择页面家族
+Global Visual Contract 控制在 8–12 条，只锁定：发布会定位、整体气质、色彩与背景、光线与摄影、排版角色、产品原则、信息密度、关键风险。不要加入项目内容、页面级创意、像素坐标或长篇禁止词。
 
-阅读任务决定页面家族，而不是先看装饰。使用 `references/page-families.md` 中的观点、场景、数据、能力、系统、产品、对比七类任务。家族数量随项目页数和内容变化；同一阅读任务可复用相近结构，但不强行套用固定母型。页面家族用于保持叙事和层级，不用于限制模型的具体构图。
+### 5. 编译逐页 Prompt
 
-### 6. 产出提示词包
-
-按 `references/prompt-schema.md` 拼装：
+按 [prompt-schema.md](references/prompt-schema.md) 组装。逐页 Prompt 只包含：
 
 ```text
-全局视觉规则 + 页面家族规则 + 当前页内容卡 + 精确文字清单 + 版式指令 + 禁止项 + 验收检查
+Global Visual Contract
++ Page Type / Title Structure / Visual Mode
++ 当前页真实内容与第一视觉
++ Reference 路由
++ 2–5 个不可改变项
++ 一个页面类型质量后缀
 ```
 
-如果用户要求不可编辑的整页生图，提示词要求 Image2 同时生成画面和文字。文字错误、排版漂移和产品复用问题先记录为测试风险，不在本 Skill 阶段擅自更换生产模式。
+内容必须来自 `content-brief.md` 或用户原始文件；缺失事实先停止并确认，不发送“待确认”给 Image2。Data、System、Process、Logic 页读取 [type-and-visual-grammar.md](references/type-and-visual-grammar.md)，先完成语义到视觉关系的映射，再写 Prompt。
 
-提示词应明确：人物不是每页的默认主视觉，但可按内容自然使用；保持明亮、克制、统一的发布会气质；给主视觉留出呼吸感；相邻页避免无理由的硬切。留白、区块关系、人物节奏和标题长度均为软约束，不能为了满足形式规则牺牲画面质量。只有在文字明显过长、事实冲突或会造成不可读时，才在生成前压缩或确认。
+### 6. Reference 路由
 
-### 7. 执行边界
+- 无目标产品：`image_mcp_demo.generate_image`。
+- 出现目标产品：必须使用用户确认的产品 Reference，调用 `image_mcp_demo.edit_image`；不得凭空生成相似产品。
+- 产品多角度图只用于识别，不得出现在最终画面。
+- 产品路径、结构特征、数量与调用参数属于项目配置，写入 `prompt-pack.md`，不写入通用 Skill。
 
-- 规划阶段：只产出三个 Markdown 文件，不调用生图 MCP。
-- 执行阶段：用户明确确认风格、颜色、整体感觉，并明确说“开始生成”后，才调用 Image2 MCP。
-- 如果本机没有可用 Image2 MCP，反馈真实错误和原因，不静默切换其他模型；Markdown 文件仍保留并告知位置。
-- 图片生成由 `image2` Skill 负责；PPTX 封装、渲染和溢出检查由 `slides` Skill 负责。
+### 7. 执行闸门
 
-### 8. 可选 PPTX 交付
+规划阶段不调用生图 MCP。用户确认 Deck Plan、Global Visual Contract、Reference 和整体方向后才执行。
 
-- 用户只需要内容简报、设计规范、提示词或逐页图片时，不调用 `slides`。
-- 用户确认 Image2 图片可用，并明确需要 PPTX 时，才调用 `slides`。
-- `slides` 负责把图片封装为 PPTX，并完成渲染、裁切、溢出和页面显示检查。
-- `slides` 是下游交付工具，不参与本 Skill 的内容提取、页面分类或视觉方向决策。
+- 默认 16:9；分辨率按用户要求，未指定则遵循 Image2 Skill 默认值。
+- MCP 失败时返回真实错误，不静默切换模型。
+- 缺少 Active Style、准确内容或必要 Reference 时不得生成。
 
-## 最小文件结构
+### 8. 复核与修正
 
-`content-brief.md`：来源层级、叙事弧线、页面地图、主张/数据台账、开放问题。
+先制作完整 contact sheet，再分别检查：
 
-`design-system.md`：已选基础版/气质变体、色彩与设计参数、字体与间距、图片/人物/产品规则、页面家族、禁止规则、验收清单、已知限制。
+- 单页内容、产品与文字准确性；
+- 跨页色彩、光线、标题结构、信息密度和产品尺度；
+- 是否出现风格漂移、海报化、模板卡片墙或页面过度同构；
+- 信息页的视觉关系是否真正解释内容；
+- 背景是否抢占文字识别区域。
 
-`prompt-pack.md`：全局视觉宪法、页面家族契约、逐页提示词、生成与检查顺序。
+修正时一次只改变一个变量，记录原 Prompt、Reference、参数、问题和结果。
 
-## 约束
+## 核心边界
 
-- 不能因为所有页面使用同一种颜色，就称为“统一”；要看结构、层级、间距、密度和图片处理。
-- 不要让每页变成独立海报；重复页面契约并控制叙事节奏。
-- 不要用装饰掩盖内容问题，不编造 slogan、榜单、来源、参数、人物或 UI 状态。
-- 不把完整原始资料复制进每页提示词，只发送相关页面内容卡和精简全局规则。
-- 质量优先：不因追求跨页形式一致而牺牲单页构图、自然层次和图像质量。
-- 统一性采用“全局气质 + 标题层级 + 色彩边界 + 叙事节奏”控制，不采用逐页硬模板。
-- 仅将明显错误设为硬禁止项：外国人物、黑色版本（用户指定浅色时）、额外 Logo/水印、虚构事实、严重乱码和与内容无关的装饰。
+- 一个 Deck 只激活一个 Style Preset。
+- 家庭浅色方向默认使用 `neutral-home-keynote`：中性白灰为主，木色只作材质点缀，清洁自然日光与中性灰阴影；温馨由人物行为、产品作用和家庭关系表达，不使用黄色滤镜、黄金时刻或昏黄灯光。
+- 标题结构默认上方居中，其他结构必须由内容关系触发。
+- Typography 使用现代无衬线字体；文字颜色按背景反差选择，不使用彩色标题。
+- 除 Hero、金句和 Ending 外，页面应具备标题、主视觉关系和必要辅助信息，不退化成海报。
+- 产品、事实、准确文字和 Reference 是硬约束；构图、尺度与视觉隐喻保留给 Image2。
+- 复杂度和创意同时受控：不靠特效制造设计，也不因删减退化成纯文字。
+- 不在 V1 建立完整 Layout Library、Blueprint 或自动校准系统。
 
 ## 参考文件
 
-- [palette-systems.md](references/palette-systems.md)：家用智能产品基础色彩和气质变体。
-- [page-families.md](references/page-families.md)：按阅读任务选择页面结构。
-- [prompt-schema.md](references/prompt-schema.md)：逐页 Image2 提示词拼装顺序和测试模式。
+- [page-families.md](references/page-families.md)：页面意图分类。
+- [style-presets.md](references/style-presets.md)：Deck 级风格边界。
+- [title-structure.md](references/title-structure.md)：三种标题结构。
+- [type-and-visual-grammar.md](references/type-and-visual-grammar.md)：信息页视觉语法。
+- [prompt-schema.md](references/prompt-schema.md)：Prompt、Reference 与执行日志格式。
+- [palette-systems.md](references/palette-systems.md)：仅在未确定色彩方向时读取。
