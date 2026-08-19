@@ -54,7 +54,7 @@ Storyboard 是逐页 Prompt 的内容依据，不规定固定版式、坐标、�
 
 ### 4. 固定 Global Visual Contract
 
-先从 [style-presets.md](references/style-presets.md) 选择一个风格，并声明：
+先从 [style-presets.md](references/style-presets.md) 选择一个风格。`validated` 可直接使用；`project-validated` 保留 Contact Sheet QA；`experimental` 必须先做 1–2 页试样并经用户确认后才能扩展全套。声明：
 
 ```yaml
 style_id: [唯一风格 ID]
@@ -119,7 +119,7 @@ Global Visual Contract
 ## 核心边界
 
 - 一个 Deck 只激活一个 Style Preset。
-- 家庭浅色方向默认使用 `neutral-home-keynote`：中性白灰为主，木色只作材质点缀，清洁自然日光与中性灰阴影；温馨由人物行为、产品作用和家庭关系表达，不使用黄色滤镜、黄金时刻或昏黄灯光。
+- 家庭浅色方向默认使用 `neutral-modern-home`：中性白灰为主，木色只作材质点缀，清洁自然日光与中性灰阴影；温馨由人物行为、产品作用和家庭关系表达，不使用黄色滤镜、黄金时刻或昏黄灯光。
 - 标题结构默认上方居中，其他结构必须由内容关系触发。
 - Typography 使用现代无衬线字体；文字颜色按背景反差选择，不使用彩色标题。
 - 除 Hero、金句和 Ending 外，页面应具备标题、主视觉关系和必要辅助信息，不退化成海报。
@@ -134,4 +134,4 @@ Global Visual Contract
 - [title-structure.md](references/title-structure.md)：三种标题结构。
 - [type-and-visual-grammar.md](references/type-and-visual-grammar.md)：信息页视觉语法。
 - [prompt-schema.md](references/prompt-schema.md)：Prompt、Reference 与执行日志格式。
-- [palette-systems.md](references/palette-systems.md)：仅在未确定色彩方向时读取。
+- [palette-systems.md](references/palette-systems.md)：旧项目术语兼容，不用于新项目选择。
