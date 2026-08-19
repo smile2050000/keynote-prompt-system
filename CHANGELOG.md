@@ -1,5 +1,13 @@
 # 更新记录
 
+## v0.9.0 - 2026-08-19
+
+- 新增 `storyboard.md`，在逐页 Prompt 前固定核心信息、观众记忆、Page Type、视觉强弱和特殊风险，但不规定死版式。
+- 将 Global Visual Contract 独立为 `global-visual-contract.md`，作为跨页视觉规则唯一来源；旧 `design-system.md` 保持兼容输入。
+- 明确逐页 Prompt 声明 Storyboard 与共享 Contract 来源，并在 Image2 调用时原样注入完整 Contract。
+- 新增首轮 Contact Sheet、`qa/qa.md` 和最终 Contact Sheet；QA 只记录明显问题，按页定点重生，不默认全套重跑。
+- 预留 approved image 到 editable reconstruction 的轻量交接接口，不引入 Layout Library、自动评分或多 Agent 路由。
+
 ## v0.8.0 - 2026-08-18
 
 - 将 A 风格从 `warm-home-editorial` 校准为 `neutral-home-keynote`，旧 ID 保留为兼容别名。

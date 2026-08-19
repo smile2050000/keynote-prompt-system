@@ -2,6 +2,28 @@
 
 本文件只定义 Prompt 的组装方式，不重复风格和页面类型规则。
 
+## Project Artifacts
+
+### storyboard.md
+
+```markdown
+| Page | Core Message | Audience Memory | Page Type | Visual Strength | Special Risk |
+|---|---|---|---|---|---|
+| 01 | [唯一核心信息] | [翻页后应记住什么] | [Page Type] | Strong / Medium / Quiet | [最关键风险] |
+```
+
+Storyboard 只定义内容任务、观众记忆和视觉节奏，不定义版式、像素坐标、字号、卡片数量或组件尺寸。
+
+### global-visual-contract.md
+
+```yaml
+style_id: [唯一风格 ID]
+style_scope: whole-deck
+style_mix: forbidden
+```
+
+YAML 后写 8–12 条共享视觉规则。该文件是唯一来源；旧项目的 `design-system.md` 只作为兼容输入。
+
 ## Global Visual Contract
 
 整套 Deck 只定义一次，控制在 8–12 条：
@@ -24,12 +46,16 @@ Typography 角色与文字反差
 ```text
 生成一张完整的 16:9 发布会 PPT 页面，画面和准确文字一次生成。
 
+[Global Visual Contract Source: global-visual-contract.md]
 [原样复用 Global Visual Contract]
 
+[Storyboard Source: Page XX]
 Page Type: [页面类型]
+Visual Strength: [Strong / Medium / Quiet]
 Title Structure: [上方居中 / 左右结构 / 金句居中]
 Visual Mode: [仅信息页填写]
 Core Message: [一个核心信息]
+Audience Memory: [观众翻页后应记住什么]
 Visual Relationship: [一个内容驱动的主关系]
 Exact Text: [逐字标题、数字、标签]
 Reference: [无 / Style / Product；路径与用途]
@@ -38,7 +64,7 @@ Page-specific Quality: [选择一个短后缀]
 Avoid: [当前页最关键的 3–5 个风险]
 ```
 
-逐页 Prompt 不重新定义风格，不发送内部推理、验收清单或设计原因。
+逐页 Prompt 不重新定义风格，不发送内部推理、验收清单或设计原因。项目文件中的 Source 声明用于追踪来源；真正调用 Image2 时仍需把 Global Visual Contract 原样注入，因为模型不能自行读取 Markdown 文件。
 
 ## 内容保真
 
@@ -98,7 +124,20 @@ premium keynote information design, content-driven visual hierarchy, precise ali
 
 ## 生成后
 
-- 制作包含全部页面和页码的 `montage-all.png`。
+- 首轮制作包含全部页面和页码的 `qa/contact-sheet-pass-01.png`。
+- 创建 `qa/qa.md`，只记录明显问题页：
+
+```markdown
+| Page | Issue | Action |
+|---|---|---|
+| 03 | [一个明显问题] | [只重生本页；改变什么；保持什么] |
+```
+
+- 只重生 `qa.md` 中的问题页，不覆盖首轮图片，不因单页问题修改共享规则。
+- 定点重生完成后制作 `qa/contact-sheet-final.png` 并复查整套。
 - 同步生成图片铺满的 `deck-preview.pptx`。
-- 单页问题与跨页问题分开记录。
-- 保存失败结果，一次只修改一个变量。
+- 单页问题与跨页系统问题分开记录；保存失败结果，一次只修改一个变量。
+
+## Editable Reconstruction Handoff
+
+图片视觉通过 QA 后，可编辑重建只接收以下已批准输入：最终页面图、对应 Storyboard、准确文字、Global Visual Contract、Reference 路由、QA 结论。派生产物单独保存，不覆盖 Image2 页面图。本 Schema 不规定具体重建引擎。

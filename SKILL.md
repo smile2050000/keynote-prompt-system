@@ -9,14 +9,17 @@ description: 将 txt、md、html、docx、pdf、pptx、截图等单一主要需�
 
 ## 固定产出
 
-1. `content-brief.md`：整套叙事、逐页内容与事实来源。
-2. `design-system.md`：8–12 条 Global Visual Contract 与唯一 `style_id`。
-3. `prompt-pack.md`：逐页最终 Prompt、Reference 路由与调用参数。
+1. `content-brief.md`：整套叙事、准确内容与事实来源。
+2. `storyboard.md`：逐页核心信息、观众记忆、Page Type、视觉强弱与特殊风险。
+3. `global-visual-contract.md`：8–12 条共享视觉规则与唯一 `style_id`。
+4. `prompt-pack.md`：逐页最终 Prompt、Reference 路由与调用参数。
 
 执行阶段另产出：
 
-- `execution-log.md`：真实调用、结果和单变量修正记录；
-- `montage-all.png`：按页码完整展示全部页面；
+- `execution-log.md`：真实调用、结果和定点重生记录；
+- `qa/contact-sheet-pass-01.png`：首轮全部页面的 Contact Sheet；
+- `qa/qa.md`：只记录明显问题及逐页处理动作；
+- `qa/contact-sheet-final.png`：问题页修正后的整套复查图；
 - `deck-preview.pptx`：每页一张整页图片铺满的预览文件。
 
 ## 工作流程
@@ -37,20 +40,19 @@ description: 将 txt、md、html、docx、pdf、pptx、截图等单一主要需�
 
 页数、受众、产品与数据事实、浅色/深色方向、参考材料用途、产品资产、交付格式或生图方式不明确时，先确认。不得猜测参数、排名、身份、业务主张或 Logo。
 
-### 3. 生成 Deck Plan
+### 3. 生成 Storyboard
 
-一次性规划整套，不逐页边生成边决定。每页只记录：
+在编译逐页 Prompt 前创建 `storyboard.md`，一次性规划整套，不逐页边生成边决定。每页只记录：
 
-- 一个核心信息与必须保留的事实；
-- Page Type 与信息密度；
-- 第一视觉对象和内容关系；
-- 人物、产品或 Style Reference；
-- 从 [title-structure.md](references/title-structure.md) 选择的标题结构；
-- 与前后页的视觉节奏。
+- `Core Message`：这一页传达的唯一核心信息；
+- `Audience Memory`：观众翻页后应记住什么；
+- `Page Type`：页面承担的阅读任务；
+- `Visual Strength`：`Strong / Medium / Quiet`，只控制整套节奏强弱；
+- `Special Risk`：当前页最需要防止的内容或视觉失败。
 
-Page Type 读取 [page-families.md](references/page-families.md)，它只定义页面意图，不规定固定母版。
+Storyboard 是逐页 Prompt 的内容依据，不规定固定版式、坐标、字号、卡片数量或组件尺寸。Page Type 读取 [page-families.md](references/page-families.md)，它只定义页面意图，不规定固定母版。准确文字、数据和事实仍以 `content-brief.md` 为准。
 
-### 4. 生成 Global Visual Contract
+### 4. 固定 Global Visual Contract
 
 先从 [style-presets.md](references/style-presets.md) 选择一个风格，并声明：
 
@@ -60,7 +62,9 @@ style_scope: whole-deck
 style_mix: forbidden
 ```
 
-Global Visual Contract 控制在 8–12 条，只锁定：发布会定位、整体气质、色彩与背景、光线与摄影、排版角色、产品原则、信息密度、关键风险。不要加入项目内容、页面级创意、像素坐标或长篇禁止词。
+将共享规则独立保存为 `global-visual-contract.md`。Global Visual Contract 控制在 8–12 条，只锁定：发布会定位、整体气质、色彩与背景、光线与摄影、排版角色、产品原则、信息密度、关键风险。不要加入项目内容、页面级创意、像素坐标、固定字号、固定卡片尺寸或长篇禁止词。
+
+`global-visual-contract.md` 是唯一视觉规则来源。旧项目的 `design-system.md` 可作为兼容输入；继续执行时先确认其内容，再映射为 `global-visual-contract.md`，不要求批量改写历史项目。
 
 ### 5. 编译逐页 Prompt
 
@@ -69,13 +73,15 @@ Global Visual Contract 控制在 8–12 条，只锁定：发布会定位、整�
 ```text
 Global Visual Contract
 + Page Type / Title Structure / Visual Mode
-+ 当前页真实内容与第一视觉
++ 当前页 Storyboard 与真实内容
 + Reference 路由
 + 2–5 个不可改变项
 + 一个页面类型质量后缀
 ```
 
-内容必须来自 `content-brief.md` 或用户原始文件；缺失事实先停止并确认，不发送“待确认”给 Image2。Data、System、Process、Logic 页读取 [type-and-visual-grammar.md](references/type-and-visual-grammar.md)，先完成语义到视觉关系的映射，再写 Prompt。
+每页都声明 `global-visual-contract.md` 和对应 Storyboard 条目为来源。由于 Image2 不读取项目文件，实际调用时必须将 Global Visual Contract 原样注入每个最终 Prompt；逐页不得改写、缩短或局部覆盖共享规则。
+
+内容必须来自 `content-brief.md`、`storyboard.md` 或用户原始文件；缺失事实先停止并确认，不发送“待确认”给 Image2。Data、System、Process、Logic 页读取 [type-and-visual-grammar.md](references/type-and-visual-grammar.md)，先完成语义到视觉关系的映射，再写 Prompt。
 
 ### 6. Reference 路由
 
@@ -92,17 +98,23 @@ Global Visual Contract
 - MCP 失败时返回真实错误，不静默切换模型。
 - 缺少 Active Style、准确内容或必要 Reference 时不得生成。
 
-### 8. 复核与修正
+### 8. Contact Sheet 与 QA
 
-先制作完整 contact sheet，再分别检查：
+首轮生成完成后，先制作包含全部页面和页码的 `qa/contact-sheet-pass-01.png`，再创建 `qa/qa.md`。QA 只记录用户可见的明显问题：
 
-- 单页内容、产品与文字准确性；
-- 跨页色彩、光线、标题结构、信息密度和产品尺度；
-- 是否出现风格漂移、海报化、模板卡片墙或页面过度同构；
-- 信息页的视觉关系是否真正解释内容；
-- 背景是否抢占文字识别区域。
+- 风格漂移或跨页产品表现不一致；
+- 构图明显重复或标题层级异常；
+- 普通商务 PPT、模板卡片墙或海报化；
+- 文字、数字、产品身份、裁切或结构错误；
+- 信息页的视觉关系没有解释内容。
 
-修正时一次只改变一个变量，记录原 Prompt、Reference、参数、问题和结果。
+`qa.md` 按 `Page / Issue / Action` 记录，只列问题页；无明显问题的页面不制造修改任务。每个 Action 写清本次改变和必须保持不变的部分。
+
+只重生问题页，不全套重跑。重生文件使用新版本名，不覆盖首轮结果；真实 Prompt、Reference、参数、输出路径和结果继续写入 `execution-log.md`。问题页修正后更新 `qa/contact-sheet-final.png`，再检查一次整套上下文。只有同一问题跨多页出现并证明来自共享规则时，才考虑修改 Global Visual Contract；修改共享规则可能影响全套，必须先向用户说明。
+
+### 9. 可编辑重建接口
+
+图片版通过 QA 后，如果用户明确要求可编辑 PPTX，再将最终页面图、对应 Storyboard、准确文字、Global Visual Contract、Reference 路由和 QA 结论作为下游重建输入。可编辑派生产物与已批准视觉图分开保存，不覆盖 Image2 视觉基线。本 Skill 不默认执行可编辑重建。
 
 ## 核心边界
 
@@ -113,7 +125,7 @@ Global Visual Contract
 - 除 Hero、金句和 Ending 外，页面应具备标题、主视觉关系和必要辅助信息，不退化成海报。
 - 产品、事实、准确文字和 Reference 是硬约束；构图、尺度与视觉隐喻保留给 Image2。
 - 复杂度和创意同时受控：不靠特效制造设计，也不因删减退化成纯文字。
-- 不在 V1 建立完整 Layout Library、Blueprint 或自动校准系统。
+- 不在 V1 建立完整 Layout Library、Blueprint、自动评分系统或多 Agent 路由。
 
 ## 参考文件
 
