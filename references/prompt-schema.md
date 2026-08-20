@@ -26,7 +26,7 @@ YAML 后写 8–12 条共享视觉规则。该文件是唯一来源；旧项目�
 
 ## Global Visual Contract
 
-整套 Deck 只定义一次，控制在 8–12 条：
+整套 Deck 只定义一次，控制在 6–8 条短规则：
 
 ```text
 16:9 与发布会定位
@@ -35,8 +35,8 @@ YAML 后写 8–12 条共享视觉规则。该文件是唯一来源；旧项目�
 色彩、背景、光线与摄影
 Typography 角色与文字反差
 产品和人物原则
-信息密度与视觉中心
-3–5 个最高风险禁止项
+统一容器、文字可读性与产品保真
+光线、材质和影调基线
 ```
 
 ## Per-page Prompt
@@ -46,8 +46,8 @@ Typography 角色与文字反差
 ```text
 生成一张完整的 16:9 发布会 PPT 页面，画面和准确文字一次生成。
 
-[Global Visual Contract Source: global-visual-contract.md]
-[原样复用 Global Visual Contract]
+[全局视觉规则来源]
+[完整粘贴 6–8 条短规则。每条只表达一个跨页稳定契约。]
 
 [Storyboard Source: Page XX]
 Page Type: [页面类型]
@@ -56,15 +56,21 @@ Title Structure: [上方居中 / 左右结构 / 金句居中]
 Visual Mode: [仅信息页填写]
 Core Message: [一个核心信息]
 Audience Memory: [观众翻页后应记住什么]
-Visual Relationship: [一个内容驱动的主关系]
+Composition Brief: [镜头尺度与视角；主体位置；每个角色/产品的行为、尺度、接触、遮挡与视线关系；文字安全区；第一视觉和次级信息的层级]
+Visual Relationship: [用画面关系解释内容，不写抽象气氛词]
+Audience Question: [观众此页正在问什么]
+Evidence Type: [真实场景 / 对比 / 产品实物 / 数据 / 系统关系 / 演示结果]
+Dominant Carrier: [人物行为 / 产品 / 空间状态 / 数字 / 关系图 / 界面 / 视频帧]
+Spatial Grammar: [同一场景对照 / 中心汇聚 / 分层协作 / 尺度递进 / 局部放大 / 证据并置]
+Distinct From: [当前页必须与哪一页区分；明确改变主视觉载体或空间语法]
 Exact Text: [逐字标题、数字、标签]
 Reference: [无 / Style / Product；路径与用途]
 Must Preserve: [2–5 个事实或产品硬约束]
-Page-specific Quality: [选择一个短后缀]
-Avoid: [当前页最关键的 3–5 个风险]
+Page-specific Quality: [按当前 Page Type / Visual Mode 动态选择的正向质量描述]
+Avoid: [最多 3 个当前页最高风险]
 ```
 
-逐页 Prompt 不重新定义风格，不发送内部推理、验收清单或设计原因。项目文件中的 Source 声明用于追踪来源；真正调用 Image2 时仍需把 Global Visual Contract 原样注入，因为模型不能自行读取 Markdown 文件。
+逐页 Prompt 不重新定义风格，不发送内部推理、验收清单或设计原因。项目文件中的 Source 声明用于追踪来源；真正调用 Image2 时必须把 Global Visual Contract 完整注入，因为模型不能自行读取 Markdown 文件，也不会继承其他页面的上下文。
 
 ## 内容保真
 
@@ -85,26 +91,57 @@ Avoid: [当前页最关键的 3–5 个风险]
 
 具体路径、产品结构和 `strength` 写入项目 `prompt-pack.md`。
 
-## 页面类型后缀
+## 页面类型动态质量描述
 
-每页只选一个，不叠加全部后缀。
+每页根据当前 Page Type、Visual Mode、Evidence Type、Dominant Carrier 和 Spatial Grammar 选择一组正向质量描述，不得五页复用同一段。质量描述必须包含：视觉载体、镜头/空间关系、材质与光线、文字安全区、数据或产品的可信表达。质量描述应先说明希望模型生成什么，再用最多 3 个页面级风险限制当前页。不要用同一长串否定词覆盖所有页面。
+
+### Prompt 长度与优先级
+
+Image2 不会因为 Prompt 更长就自动更准确。编译时按以下优先级排序：
+
+1. 页面准确文字、关键数字、产品身份和 Reference；
+2. 当前页观众问题、证据类型、主视觉载体和空间语法；
+3. 镜头、主体位置、角色/产品关系和文字安全区；
+4. 共享色彩、字体、光线、材质和容器契约；
+5. 页面级质量描述；
+6. 不超过 3 条当前页最高风险。
+
+删除演讲稿、内部推理、重复背景说明、跨页比较和无法由当前模型执行的抽象要求。共享规则建议保持 6–8 条短句，页面 Prompt 先完成结构和内容，再补质量描述。
 
 **场景摄影**
 
 ```text
-premium commercial lifestyle photography, professional art direction, accurate perspective, clear midtones, crisp material detail, realistic skin and fabric, controlled highlights, no haze, no synthetic CGI look
+真实商业生活方式摄影，明确的镜头距离和主体关系，专业美术指导，透视准确，清晰中间调，真实肤色和织物，受控高光，空间留白稳定，适合标题叠加
 ```
 
 **产品融合**
 
 ```text
-the product is physically present in the environment, matched perspective, scale, focus, lighting and color temperature, real contact surface and shadow, natural occlusion, preserve exact product identity
+产品真实存在于环境中，透视、尺度、焦点、光线和色温匹配，接触面和阴影真实，遮挡关系自然，保持产品身份、结构和材质准确
 ```
 
 **信息设计**
 
 ```text
-premium keynote information design, content-driven visual hierarchy, precise alignment, restrained depth, generous negative space, no template dashboard, no decorative technology effects
+发布会信息设计，内容驱动的视觉层级，关系清晰，对齐精准，尺度和密度有变化，保留充足留白，文字可读，图形服务于信息关系
+```
+
+**大数字 / 数据证据**
+
+```text
+发布会数据证据页，数字是主锚点但不是唯一视觉内容；用清晰的证据关系、局部语义图形、真实场景细节或克制的编辑化图表解释数字来源；重点色用于数据关系和关键节点，背景保留明亮中间调，数字、标签、解释和来源形成明确层级，适合大屏投影阅读
+```
+
+**新品发布 / 产品英雄页**
+
+```text
+发布会新品英雄页，产品是唯一第一视觉，使用明确镜头距离、产品视角、接触面、尺度和光线方向；环境只承担产品语境，卖点通过产品动作、结构细节或真实使用关系表达；标题区与产品区有清晰留白，材质真实，产品边缘和屏幕细节锐利
+```
+
+**真实场景 / 对比页**
+
+```text
+真实场景关系页，使用同一空间和同一时间关系呈现前后或认知差异；人物行为、环境状态和视觉标注共同回答观众问题；镜头连续、角色位置可追踪、主次关系明确，场景真实而不摆拍，文字叠加区保持稳定反差
 ```
 
 ## 执行日志

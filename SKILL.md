@@ -49,6 +49,12 @@ description: 将 txt、md、html、docx、pdf、pptx、截图等单一主要需�
 - `Page Type`：页面承担的阅读任务；
 - `Visual Strength`：`Strong / Medium / Quiet`，只控制整套节奏强弱；
 - `Special Risk`：当前页最需要防止的内容或视觉失败。
+- `Composition Brief`：将内容关系编译为可独立执行的镜头、主体位置、角色/产品关系、文字安全区和层级关系；不得只写抽象气氛词。
+- `Audience Question`：观众这一页正在问什么问题；不能只写“介绍能力”。
+- `Evidence Type`：这一页用什么证据回答问题，例如真实场景、前后对比、产品实物、数据、系统关系或演示结果。
+- `Dominant Carrier`：主要承载信息的视觉载体，例如人物行为、产品、空间状态、数字、关系图、界面或视频帧。
+- `Spatial Grammar`：内容关系对应的空间语法，例如同一场景对照、中心汇聚、分层协作、尺度递进、局部放大或证据并置。
+- `Distinct From`：当前页必须与哪一页在视觉结构上区分，以及具体改变什么；这条文字必须直接注入当前页 Prompt。
 
 Storyboard 是逐页 Prompt 的内容依据，不规定固定版式、坐标、字号、卡片数量或组件尺寸。Page Type 读取 [page-families.md](references/page-families.md)，它只定义页面意图，不规定固定母版。准确文字、数据和事实仍以 `content-brief.md` 为准。
 
@@ -62,7 +68,7 @@ style_scope: whole-deck
 style_mix: forbidden
 ```
 
-将共享规则独立保存为 `global-visual-contract.md`。Global Visual Contract 控制在 8–12 条，只锁定：发布会定位、整体气质、色彩与背景、光线与摄影、排版角色、产品原则、信息密度、关键风险。不要加入项目内容、页面级创意、像素坐标、固定字号、固定卡片尺寸或长篇禁止词。
+将共享规则独立保存为 `global-visual-contract.md`。Global Visual Contract 控制在 6–8 条短规则，只锁定跨页稳定契约：发布会定位、整体气质、基础色彩、字体角色、产品保真、统一容器边界、文字可读性和光线/材质基线。Style Lock 只锁定品牌气质和视觉材料，不锁定页面布局、主视觉载体、标题位置或信息图语法。不要把项目内容、页级构图、跨页差异、像素坐标、固定字号、固定卡片尺寸或长篇禁止词写入共享规则。
 
 `global-visual-contract.md` 是唯一视觉规则来源。旧项目的 `design-system.md` 可作为兼容输入；继续执行时先确认其内容，再映射为 `global-visual-contract.md`，不要求批量改写历史项目。
 
@@ -71,17 +77,21 @@ style_mix: forbidden
 按 [prompt-schema.md](references/prompt-schema.md) 组装。逐页 Prompt 只包含：
 
 ```text
-Global Visual Contract
+Global Visual Contract（每页完整原样注入）
 + Page Type / Title Structure / Visual Mode
 + 当前页 Storyboard 与真实内容
++ Composition Brief（镜头、主体位置、角色/产品关系、文字安全区）
++ Audience Question / Evidence Type / Dominant Carrier / Spatial Grammar
++ Distinct From（当前页与其他页的明确结构差异）
 + Reference 路由
 + 2–5 个不可改变项
-+ 一个页面类型质量后缀
++ 页面类型对应的动态质量描述
++ 3 个以内页面级最高风险
 ```
 
-每页都声明 `global-visual-contract.md` 和对应 Storyboard 条目为来源。由于 Image2 不读取项目文件，实际调用时必须将 Global Visual Contract 原样注入每个最终 Prompt；逐页不得改写、缩短或局部覆盖共享规则。
+每页都声明 `global-visual-contract.md` 和对应 Storyboard 条目为来源。由于 Image2 不读取项目文件，也没有上一页或下一页记忆，实际调用时必须将 Global Visual Contract 的完整正文原样注入每个最终 Prompt。禁止写“沿用上一页规则”“避免与其他页重复”或“见全局文件”来代替正文。跨页差异必须在当前页 Prompt 中直接写明。
 
-内容必须来自 `content-brief.md`、`storyboard.md` 或用户原始文件；缺失事实先停止并确认，不发送“待确认”给 Image2。Data、System、Process、Logic 页读取 [type-and-visual-grammar.md](references/type-and-visual-grammar.md)，先完成语义到视觉关系的映射，再写 Prompt。
+内容必须来自 `content-brief.md`、`storyboard.md` 或用户原始文件；缺失事实先停止并确认，不发送“待确认”给 Image2。Data、System、Process、Logic、Comparison、Product Launch 页读取 [type-and-visual-grammar.md](references/type-and-visual-grammar.md)，先完成语义到视觉关系的映射，再写 Prompt。禁止把“新品发布”“功能介绍”“用户场景”全部归入泛化的 Feature；必须先确定观众问题和证据类型。
 
 ### 6. Reference 路由
 
@@ -121,10 +131,17 @@ Global Visual Contract
 - 一个 Deck 只激活一个 Style Preset。
 - 家庭浅色方向默认使用 `neutral-modern-home`：中性白灰为主，木色只作材质点缀，清洁自然日光与中性灰阴影；温馨由人物行为、产品作用和家庭关系表达，不使用黄色滤镜、黄金时刻或昏黄灯光。
 - 标题结构默认上方居中，其他结构必须由内容关系触发。
+- Style Lock 只锁定品牌气质、色彩、字体角色、材质和产品保真，不锁定所有页面使用同一版式。
 - Typography 使用现代无衬线字体；文字颜色按背景反差选择，不使用彩色标题。
 - 除 Hero、金句和 Ending 外，页面应具备标题、主视觉关系和必要辅助信息，不退化成海报。
 - 产品、事实、准确文字和 Reference 是硬约束；构图、尺度与视觉隐喻保留给 Image2。
 - 复杂度和创意同时受控：不靠特效制造设计，也不因删减退化成纯文字。
+- 视觉关系必须具体到镜头尺度/视角、主体与角色位置、角色之间的行为关系、产品与环境的接触/遮挡/尺度关系、文字安全区和第一视觉，不得只写“有信息量”“围绕某主题展开”等抽象描述。
+- 页面级质量描述必须按当前 Page Type 和 Visual Mode 动态选择并优先写正向画面质量；Avoid 最多保留 3 个当前页最高风险，不用一长串通用否定词替代构图指令。
+- Prompt 编译采用“短全局契约 + 清晰页面任务 + 具体构图简报 + 正确内容 + 动态质量描述”的顺序；不要把所有规则、演讲稿、验收清单和历史背景一起塞给 Image2。
+- 当页面文字很多、数字很多或需要产品身份高度准确时，必须标记“整页生图风险”；Image2 生成的文字和复杂关系不能视为排版或事实准确的保证，必要时拆为视觉底图与后续排字/编辑验证。
+- 12 页以上 Deck 必须先生成“页面构图地图”，为每页分配不同的主视觉载体和空间语法；至少区分封面、真实场景/对比、新品/产品、数据证据、系统架构、演示结果和收束页。
+- 大数字页不得只生成黑白数字排版。必须声明数据的证据关系、数字之外的视觉载体、重点色使用方式、空间层次和数据来源位置；若没有真实证据载体，必须明确使用编辑化抽象图形，而不是默认三栏白底数字。
 - 不在 V1 建立完整 Layout Library、Blueprint、自动评分系统或多 Agent 路由。
 
 ## 参考文件
