@@ -6,6 +6,8 @@
 
 ```text
 PPT 需求 → 内容简报 → Storyboard → 全局视觉规则 → 逐页 Prompt → 图片生成 → QA → PPTX 预览
+
+每轮都从新的运行目录开始，重新建立来源、Storyboard 和逐页 Prompt。历史项目默认不继承，只有用户明确指定的 Reference 才能使用。
 ```
 
 它负责梳理叙事、准确文案、页面任务、整套视觉风格、逐页图片 Prompt、Reference 路由和 QA 规则。

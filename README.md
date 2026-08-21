@@ -24,6 +24,10 @@ PPTX 是可选下游产物，由 `slides` / `ppt` Skill 在用户明确需要时
 
 支持 `txt`、`md`、`html`、`docx`、`pdf`、`pptx`、截图和其他可读取文本格式。默认只处理一个主要需求文件；其他文件需用户明确说明为参考材料。
 
+## 每轮独立开始
+
+每轮任务都新建独立运行目录，重新建立本轮来源，重新编写 `content-brief.md`、`storyboard.md`、`global-visual-contract.md` 和 `prompt-pack.md`。历史项目的 Prompt、Storyboard、视觉规则、图片和 QA 默认不继承；只有用户明确指定为本轮 Reference 时才使用。
+
 ## 当前设计原则
 
 - 家用智能产品采用“浅色/深色基础版 + 气质变体”；家庭浅色默认风格为 `neutral-home-keynote`，温馨由生活关系而非黄色滤镜表达；
