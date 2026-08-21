@@ -3,7 +3,7 @@
 把单个 PPT 需求文件整理为：
 
 - `content-brief.md`：内容和叙事地图；
-- `storyboard.md`：逐页内容任务、观众记忆与视觉节奏；
+- `storyboard.md`：逐页内容任务、观众问题、证据类型、主视觉载体、空间语法与风险；
 - `global-visual-contract.md`：整套共享视觉规则；
 - `prompt-pack.md`：逐页 Image2 提示词。
 
@@ -15,6 +15,8 @@
 
 - `image2`：生成或编辑图片；
 - `slides`：在用户确认图片后封装 PPTX，并做渲染和溢出检查。
+
+PPTX 是可选下游产物，由 `slides` / `ppt` Skill 在用户明确需要时封装，不属于本 Skill 的固定规划产出。
 
 规划阶段不会自动调用生图 MCP。用户确认风格、颜色、整体感觉并明确说“开始生成”后，才进入执行阶段。
 

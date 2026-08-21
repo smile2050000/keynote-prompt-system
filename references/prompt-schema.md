@@ -6,13 +6,32 @@
 
 ### storyboard.md
 
-```markdown
-| Page | Core Message | Audience Memory | Page Type | Visual Strength | Special Risk |
-|---|---|---|---|---|---|
-| 01 | [唯一核心信息] | [翻页后应记住什么] | [Page Type] | Strong / Medium / Quiet | [最关键风险] |
-```
+Storyboard 必须真实记录每页的内容任务、视觉关系和风险字段，不得只在 Prompt 编译时临时补写。具体字段模板见下方“Storyboard 分组模板”。
 
-Storyboard 只定义内容任务、观众记忆和视觉节奏，不定义版式、像素坐标、字号、卡片数量或组件尺寸。
+### Storyboard 分组模板
+
+每页使用以下分组模板：
+
+## Page XX｜[页面标题]
+
+### 内容任务
+- Core Message：[唯一核心信息]
+- Audience Memory：[观众翻页后应记住什么]
+- Audience Question：[观众此页正在问什么]
+
+### 视觉关系
+- Page Type：[页面类型]
+- Visual Strength：[Strong / Medium / Quiet]
+- Evidence Type：[真实场景 / 对比 / 产品实物 / 数据 / 系统关系 / 演示结果]
+- Dominant Carrier：[人物行为 / 产品 / 空间状态 / 数字 / 关系图 / 界面 / 视频帧]
+- Spatial Grammar：[同一场景对照 / 中心汇聚 / 分层协作 / 尺度递进 / 局部放大 / 证据并置]
+- Composition Brief：[镜头、主体位置、角色/产品关系、文字安全区和层级关系]
+- Distinct From：[本页必须采用的独特视觉关系，以及禁止复用的结构；不要只写“不同于第 X 页”]
+
+### 风险与约束
+- Special Risk：[当前页最关键风险]
+- Product Role：[产品在本页的角色；无产品时写“无目标产品”]
+- Reference Route：[Reference 路径、用途和视角]
 
 ### global-visual-contract.md
 
@@ -22,7 +41,7 @@ style_scope: whole-deck
 style_mix: forbidden
 ```
 
-YAML 后写 8–12 条共享视觉规则。该文件是唯一来源；旧项目的 `design-system.md` 只作为兼容输入。
+YAML 后写 6–8 条共享视觉规则。该文件是唯一来源；旧项目的 `design-system.md` 只作为兼容输入。Prompt 编译前必须确认文件存在、`style_id` 唯一且正文已完成。
 
 ## Global Visual Contract
 
@@ -44,7 +63,7 @@ Typography 角色与文字反差
 每页按以下顺序编译：
 
 ```text
-生成一张完整的 16:9 发布会 PPT 页面，画面和准确文字一次生成。
+生成一张完整的 16:9 发布会 PPT 页面。当前 v0.9 使用 Image2 整页生图模式，画面和可见文字一次生成；不得在执行中自动切换为底图排字或其他生产模式。
 
 [全局视觉规则来源]
 [完整粘贴 6–8 条短规则。每条只表达一个跨页稳定契约。]
@@ -62,7 +81,7 @@ Audience Question: [观众此页正在问什么]
 Evidence Type: [真实场景 / 对比 / 产品实物 / 数据 / 系统关系 / 演示结果]
 Dominant Carrier: [人物行为 / 产品 / 空间状态 / 数字 / 关系图 / 界面 / 视频帧]
 Spatial Grammar: [同一场景对照 / 中心汇聚 / 分层协作 / 尺度递进 / 局部放大 / 证据并置]
-Distinct From: [当前页必须与哪一页区分；明确改变主视觉载体或空间语法]
+Distinct From: [本页必须采用的独特视觉关系，以及禁止复用的结构；必须让 Image2 在当前 Prompt 中可独立理解]
 Exact Text: [逐字标题、数字、标签]
 Reference: [无 / Style / Product；路径与用途]
 Must Preserve: [2–5 个事实或产品硬约束]
@@ -70,7 +89,7 @@ Page-specific Quality: [按当前 Page Type / Visual Mode 动态选择的正向�
 Avoid: [最多 3 个当前页最高风险]
 ```
 
-逐页 Prompt 不重新定义风格，不发送内部推理、验收清单或设计原因。项目文件中的 Source 声明用于追踪来源；真正调用 Image2 时必须把 Global Visual Contract 完整注入，因为模型不能自行读取 Markdown 文件，也不会继承其他页面的上下文。
+逐页 Prompt 不重新定义风格，不发送内部推理、验收清单或设计原因。项目文件中的 Source 声明用于追踪来源；真正调用 Image2 时必须把 Global Visual Contract 完整注入，因为模型不能自行读取 Markdown 文件，也不会继承其他页面的上下文。最终 Prompt 的生产模式固定为整页生图；文字和复杂关系错误不自动降级为底图排字，只能通过 QA 记录和问题页定点重生处理。
 
 ## 内容保真
 
@@ -170,9 +189,17 @@ Image2 不会因为 Prompt 更长就自动更准确。编译时按以下优先�
 | 03 | [一个明显问题] | [只重生本页；改变什么；保持什么] |
 ```
 
+每页 QA 至少按以下顺序检查并记录结果；本轮可以人工执行，不要求自动化：
+
+1. **文字与数字**：对照 `content-brief.md` 和当前页 Exact Text，逐字核对标题、数字、标签、单位和产品名；不能只凭缩略图判断。
+2. **产品与 Reference**：确认产品身份、结构、数量、视角和 Reference 路由正确；确认没有凭空出现未提供的产品。
+3. **Global Visual Contract**：检查标题结构、字体角色、色彩/光线基线、容器边界和产品保真。
+4. **Storyboard 关系**：检查 Page Type、Evidence Type、Dominant Carrier、Spatial Grammar 和 Distinct From 是否在画面中可见。
+5. **明显风险**：只记录用户可见的错误或明显退化，不为了形式完整制造问题。
+
 - 只重生 `qa.md` 中的问题页，不覆盖首轮图片，不因单页问题修改共享规则。
 - 定点重生完成后制作 `qa/contact-sheet-final.png` 并复查整套。
-- 同步生成图片铺满的 `deck-preview.pptx`。
+- 如用户明确需要 PPTX，再将最终图片交给 `slides` / `ppt` Skill 封装 `deck-preview.pptx`；本 Schema 不要求主 Skill 自动生成 PPTX。
 - 单页问题与跨页系统问题分开记录；保存失败结果，一次只修改一个变量。
 
 ## Editable Reconstruction Handoff

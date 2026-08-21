@@ -70,14 +70,14 @@ keynote-prompt-system/
 | 文件 | 作用 |
 |---|---|
 | `content-brief.md` | 产品事实、准确文案、叙事目标和数据来源 |
-| `storyboard.md` | 每页核心信息、观众记忆、Page Type、视觉强弱和风险 |
+| `storyboard.md` | 每页内容任务、观众问题、证据类型、主视觉载体、空间语法和风险 |
 | `global-visual-contract.md` | 全套共享视觉规则和唯一 `style_id` |
 | `prompt-pack.md` | 每页完整 Prompt、Reference、调用方式和质量约束 |
 | `execution-log.md` | 真实调用、Provider、Model、参数、输出和失败记录 |
 | `qa/contact-sheet-pass-01.png` | 首轮全部页面缩略图 |
 | `qa/qa.md` | 明显问题页和修正动作 |
 | `qa/contact-sheet-final.png` | 修正后的整套复查图 |
-| `deck-preview.pptx` | 每页一张整页图片的 PPTX 预览 |
+| `deck-preview.pptx` | 可选下游产物，由 `slides` / `ppt` Skill 封装 |
 
 ## 5. 推荐调用话术
 

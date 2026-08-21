@@ -5,13 +5,13 @@ description: 将 txt、md、html、docx、pdf、pptx、截图等单一主要需�
 
 # Keynote Prompt System V1
 
-目标：用少量稳定约束、准确内容和正确 Reference，生成统一且可修正的发布会 PPT 视觉稿。V1 暂不解决可编辑文字、完整母版库或自动视觉校准。
+目标：用少量稳定约束、准确内容和正确 Reference，规划并生成统一且可修正的发布会 PPT 视觉稿。当前 v0.9 生产模式固定为 Image2 整页生图；文字、数字和复杂关系必须在生成后验证。V1 暂不解决完整母版库或自动视觉校准。
 
 ## 固定产出
 
 1. `content-brief.md`：整套叙事、准确内容与事实来源。
 2. `storyboard.md`：逐页核心信息、观众记忆、Page Type、视觉强弱与特殊风险。
-3. `global-visual-contract.md`：8–12 条共享视觉规则与唯一 `style_id`。
+3. `global-visual-contract.md`：6–8 条共享视觉规则与唯一 `style_id`。
 4. `prompt-pack.md`：逐页最终 Prompt、Reference 路由与调用参数。
 
 执行阶段另产出：
@@ -20,7 +20,7 @@ description: 将 txt、md、html、docx、pdf、pptx、截图等单一主要需�
 - `qa/contact-sheet-pass-01.png`：首轮全部页面的 Contact Sheet；
 - `qa/qa.md`：只记录明显问题及逐页处理动作；
 - `qa/contact-sheet-final.png`：问题页修正后的整套复查图；
-- `deck-preview.pptx`：每页一张整页图片铺满的预览文件。
+- `deck-preview.pptx`：可选下游预览文件，由 `slides` / `ppt` Skill 在用户明确需要时封装。
 
 ## 工作流程
 
@@ -42,19 +42,7 @@ description: 将 txt、md、html、docx、pdf、pptx、截图等单一主要需�
 
 ### 3. 生成 Storyboard
 
-在编译逐页 Prompt 前创建 `storyboard.md`，一次性规划整套，不逐页边生成边决定。每页只记录：
-
-- `Core Message`：这一页传达的唯一核心信息；
-- `Audience Memory`：观众翻页后应记住什么；
-- `Page Type`：页面承担的阅读任务；
-- `Visual Strength`：`Strong / Medium / Quiet`，只控制整套节奏强弱；
-- `Special Risk`：当前页最需要防止的内容或视觉失败。
-- `Composition Brief`：将内容关系编译为可独立执行的镜头、主体位置、角色/产品关系、文字安全区和层级关系；不得只写抽象气氛词。
-- `Audience Question`：观众这一页正在问什么问题；不能只写“介绍能力”。
-- `Evidence Type`：这一页用什么证据回答问题，例如真实场景、前后对比、产品实物、数据、系统关系或演示结果。
-- `Dominant Carrier`：主要承载信息的视觉载体，例如人物行为、产品、空间状态、数字、关系图、界面或视频帧。
-- `Spatial Grammar`：内容关系对应的空间语法，例如同一场景对照、中心汇聚、分层协作、尺度递进、局部放大或证据并置。
-- `Distinct From`：当前页必须与哪一页在视觉结构上区分，以及具体改变什么；这条文字必须直接注入当前页 Prompt。
+在编译逐页 Prompt 前创建 `storyboard.md`，一次性规划整套，不逐页边生成边决定。每页按 [prompt-schema.md](references/prompt-schema.md) 的分组模板记录内容任务、视觉关系和风险字段。字段必须真实落盘，不能只在 Prompt 编译阶段临时补写。
 
 Storyboard 是逐页 Prompt 的内容依据，不规定固定版式、坐标、字号、卡片数量或组件尺寸。Page Type 读取 [page-families.md](references/page-families.md)，它只定义页面意图，不规定固定母版。准确文字、数据和事实仍以 `content-brief.md` 为准。
 
@@ -68,7 +56,7 @@ style_scope: whole-deck
 style_mix: forbidden
 ```
 
-将共享规则独立保存为 `global-visual-contract.md`。Global Visual Contract 控制在 6–8 条短规则，只锁定跨页稳定契约：发布会定位、整体气质、基础色彩、字体角色、产品保真、统一容器边界、文字可读性和光线/材质基线。Style Lock 只锁定品牌气质和视觉材料，不锁定页面布局、主视觉载体、标题位置或信息图语法。不要把项目内容、页级构图、跨页差异、像素坐标、固定字号、固定卡片尺寸或长篇禁止词写入共享规则。
+将共享规则独立保存为 `global-visual-contract.md`。Global Visual Contract 固定为 6–8 条短规则，只锁定跨页稳定契约：发布会定位、整体气质、基础色彩、字体角色、产品保真、统一容器边界、文字可读性和光线/材质基线。Style Lock 只锁定品牌气质和视觉材料，不锁定页面布局、主视觉载体、标题位置或信息图语法。Prompt 编译前必须确认该文件存在且已选定唯一 `style_id`。不要把项目内容、页级构图、跨页差异、像素坐标、固定字号、固定卡片尺寸或长篇禁止词写入共享规则。
 
 `global-visual-contract.md` 是唯一视觉规则来源。旧项目的 `design-system.md` 可作为兼容输入；继续执行时先确认其内容，再映射为 `global-visual-contract.md`，不要求批量改写历史项目。
 
@@ -102,7 +90,7 @@ Global Visual Contract（每页完整原样注入）
 
 ### 7. 执行闸门
 
-规划阶段不调用生图 MCP。用户确认 Deck Plan、Global Visual Contract、Reference 和整体方向后才执行。
+规划阶段不调用生图 MCP。用户确认项目规划、Global Visual Contract、Reference 和整体方向后才执行。
 
 - 默认 16:9；分辨率按用户要求，未指定则遵循 Image2 Skill 默认值。
 - MCP 失败时返回真实错误，不静默切换模型。
@@ -139,9 +127,10 @@ Global Visual Contract（每页完整原样注入）
 - 视觉关系必须具体到镜头尺度/视角、主体与角色位置、角色之间的行为关系、产品与环境的接触/遮挡/尺度关系、文字安全区和第一视觉，不得只写“有信息量”“围绕某主题展开”等抽象描述。
 - 页面级质量描述必须按当前 Page Type 和 Visual Mode 动态选择并优先写正向画面质量；Avoid 最多保留 3 个当前页最高风险，不用一长串通用否定词替代构图指令。
 - Prompt 编译采用“短全局契约 + 清晰页面任务 + 具体构图简报 + 正确内容 + 动态质量描述”的顺序；不要把所有规则、演讲稿、验收清单和历史背景一起塞给 Image2。
-- 当页面文字很多、数字很多或需要产品身份高度准确时，必须标记“整页生图风险”；Image2 生成的文字和复杂关系不能视为排版或事实准确的保证，必要时拆为视觉底图与后续排字/编辑验证。
+- 当前 v0.9 只使用 Image2 整页生图模式：画面与可见文字一次生成，不在执行中自动切换为底图排字或其他模式。所有页面仍必须标记文字、数字、复杂关系和产品身份风险；生成后的错误只能通过 QA 记录和问题页定点重生处理。底图排字属于未来实验方向，不是当前默认补救流程。
 - 12 页以上 Deck 必须先生成“页面构图地图”，为每页分配不同的主视觉载体和空间语法；至少区分封面、真实场景/对比、新品/产品、数据证据、系统架构、演示结果和收束页。
 - 大数字页不得只生成黑白数字排版。必须声明数据的证据关系、数字之外的视觉载体、重点色使用方式、空间层次和数据来源位置；若没有真实证据载体，必须明确使用编辑化抽象图形，而不是默认三栏白底数字。
+- QA 必须至少逐页检查：准确文字与数字、产品 Reference/产品身份、Global Visual Contract、Page Type 与 Storyboard 视觉关系；本规则只定义检查要求，不要求本轮自动化或全套迭代。
 - 不在 V1 建立完整 Layout Library、Blueprint、自动评分系统或多 Agent 路由。
 
 ## 参考文件

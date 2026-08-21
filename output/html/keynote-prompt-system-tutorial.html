@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Keynote Prompt System 使用教程</title>
+  <meta name="description" content="Skill 视觉执行流程。">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --paper: #ffffff;
+      --ink: #182230;
+      --muted: #667085;
+      --faint: #8b96a7;
+      --line: #dfe5ee;
+      --accent: #255bd6;
+      --accent-soft: #edf3ff;
+      --green: #07866b;
+      --orange: #c96a1c;
+      --code: #f1f4f8;
+      --shadow: 0 18px 55px rgba(31, 48, 81, .08);
+      --radius: 16px;
+    }
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #11161f;
+      --paper: #18202c;
+      --ink: #f4f7fb;
+      --muted: #a8b2c2;
+      --faint: #7f8a9d;
+      --line: #303b4d;
+      --accent: #8db0ff;
+      --accent-soft: #1c2b4a;
+      --green: #63d7b7;
+      --orange: #ffb36d;
+      --code: #121a27;
+      --shadow: 0 18px 55px rgba(0, 0, 0, .24);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "PingFang SC", "PingFang TC", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.72;
+      letter-spacing: 0;
+    }
+    a { color: inherit; }
+    .shell { max-width: 1320px; margin: 0 auto; padding: 28px 32px 72px; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+      min-height: 58px; border-bottom: 1px solid var(--line); margin-bottom: 58px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: -.02em; }
+    .brand-mark { width: 30px; height: 30px; border-radius: 9px; background: var(--accent); display: grid; place-items: center; color: white; font-size: 14px; }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .top-actions a, .theme-toggle { color: var(--muted); font-size: 13px; text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; background: var(--paper); cursor: pointer; font: inherit; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); gap: 70px; align-items: end; margin-bottom: 68px; }
+    .eyebrow { color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { font-size: clamp(42px, 6vw, 78px); line-height: 1.06; letter-spacing: -.055em; margin: 12px 0 18px; max-width: 760px; }
+    .hero-lede { color: var(--muted); font-size: 19px; max-width: 660px; margin: 0; }
+    .hero-note { border-left: 3px solid var(--accent); padding: 14px 0 14px 20px; color: var(--muted); max-width: 390px; }
+    .hero-note strong { display: block; color: var(--ink); margin-bottom: 6px; }
+    .layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 58px; align-items: start; }
+    aside { position: sticky; top: 24px; }
+    .toc-title { font-size: 12px; color: var(--faint); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 12px; }
+    .toc { display: grid; gap: 5px; }
+    .toc a { text-decoration: none; color: var(--muted); font-size: 14px; padding: 7px 9px; border-radius: 8px; }
+    .toc a:hover { color: var(--accent); background: var(--accent-soft); }
+    main { min-width: 0; }
+    section { scroll-margin-top: 26px; margin-bottom: 76px; }
+    .section-head { display: flex; gap: 16px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 24px; margin-bottom: 24px; }
+    .section-index { color: var(--accent); font-size: 13px; font-weight: 700; min-width: 30px; }
+    h2 { font-size: 30px; line-height: 1.18; letter-spacing: -.035em; margin: 0; }
+    h3 { font-size: 18px; line-height: 1.3; letter-spacing: -.02em; margin: 28px 0 10px; }
+    p { margin: 0 0 14px; }
+    .muted { color: var(--muted); }
+    .lead { font-size: 18px; color: var(--muted); max-width: 760px; }
+    .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 22px 0; }
+    .flow span { border: 1px solid var(--line); background: var(--paper); border-radius: 10px; padding: 9px 12px; font-size: 14px; box-shadow: 0 5px 18px rgba(31,48,81,.04); }
+    .flow i { color: var(--faint); font-style: normal; }
+    .route-grid, .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 21px; box-shadow: 0 7px 24px rgba(31,48,81,.035); }
+    .card.accent { border-left: 4px solid var(--accent); }
+    .card.green { border-left: 4px solid var(--green); }
+    .card.orange { border-left: 4px solid var(--orange); }
+    .card h3 { margin: 0 0 7px; font-size: 17px; }
+    .card p { color: var(--muted); margin: 0; font-size: 14px; }
+    .route-label { font-weight: 700; margin-bottom: 7px; }
+    .route-label.green { color: var(--green); }
+    .route-label.orange { color: var(--orange); }
+    .code-wrap { position: relative; margin: 14px 0 20px; }
+    pre { overflow-x: auto; margin: 0; padding: 17px 19px; border-radius: 12px; border: 1px solid var(--line); background: var(--code); color: var(--ink); font: 13px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; }
+    .copy { position: absolute; top: 9px; right: 9px; border: 1px solid var(--line); background: var(--paper); color: var(--muted); border-radius: 7px; padding: 5px 8px; font: 12px "PingFang SC", -apple-system, sans-serif; cursor: pointer; }
+    .copy:hover { color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: table; }
+    th, td { text-align: left; vertical-align: top; padding: 13px 15px; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-size: 13px; font-weight: 600; background: var(--code); }
+    td { font-size: 14px; }
+    tr:last-child td { border-bottom: 0; }
+    .callout { display: grid; grid-template-columns: auto 1fr; gap: 14px; background: var(--accent-soft); border-radius: 14px; padding: 17px 19px; margin: 20px 0; }
+    .callout-mark { width: 24px; height: 24px; border-radius: 7px; background: var(--accent); color: white; display: grid; place-items: center; font-size: 13px; font-weight: 700; }
+    .callout p { margin: 0; color: var(--muted); font-size: 14px; }
+    .recipe-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .recipe { background: var(--paper); border: 1px solid var(--line); border-radius: 13px; padding: 16px 17px; }
+    .recipe strong { display: block; font-size: 15px; margin-bottom: 5px; }
+    .recipe span { color: var(--muted); font-size: 13px; }
+    .footer { border-top: 1px solid var(--line); color: var(--faint); font-size: 13px; padding-top: 22px; display: flex; justify-content: space-between; gap: 20px; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 24px; }
+      .hero-note { max-width: none; }
+      .layout { grid-template-columns: 1fr; gap: 24px; }
+      aside { position: static; }
+      .toc { display: flex; flex-wrap: wrap; }
+    }
+    @media (max-width: 640px) {
+      .shell { padding: 18px 18px 48px; }
+      .topbar { margin-bottom: 38px; }
+      .top-actions a { display: none; }
+      h1 { font-size: 43px; }
+      h2 { font-size: 26px; }
+      .route-grid, .card-grid, .recipe-grid { grid-template-columns: 1fr; }
+      section { margin-bottom: 54px; }
+      .footer { flex-direction: column; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">K</span><span>Keynote Prompt System</span></div>
+      <div class="top-actions"><a href="#流程">快速开始</a><button class="theme-toggle" type="button" aria-label="切换深色模式">切换主题</button></div>
+    </header>
+
+    <section class="hero" id="top">
+      <div>
+        <div class="eyebrow">使用教程 · v0.9</div>
+        <h1>Skill 视觉执行流程</h1>
+        <p class="hero-lede">从需求、叙事和风格开始，逐步得到可复制的 Prompt、可检查的 QA 记录，以及整页图片版 PPTX。</p>
+      </div>
+      <div class="hero-note"><strong>先记住一件事</strong><span>Skill 负责把需求想清楚、写清楚。图片平台负责生成图片。MCP 是可选的自动生图通道。</span></div>
+    </section>
+
+    <div class="layout">
+      <aside>
+        <div class="toc-title">目录</div>
+        <nav class="toc" aria-label="教程目录">
+          <a href="#流程">快速理解</a><a href="#职责">它负责什么</a><a href="#安装">安装与调用</a><a href="#产物">核心产物</a><a href="#路线">两种生产路线</a><a href="#话术">单流程话术</a><a href="#平台">外部平台</a><a href="#qa">风格与 QA</a>
+        </nav>
+      </aside>
+
+      <main>
+        <section id="流程">
+          <div class="section-head"><span class="section-index">01</span><h2>先看完整流程</h2></div>
+          <p class="lead">它不是图片平台，而是 PPT 图片生产的总编排。先把内容、叙事、视觉规则和逐页约束整理好，再进入生图和 QA。</p>
+          <div class="flow" aria-label="生产流程"><span>需求</span><i>→</i><span>内容简报</span><i>→</i><span>Storyboard</span><i>→</i><span>全局视觉规则</span><i>→</i><span>Prompt Pack</span><i>→</i><span>图片生成</span><i>→</i><span>QA</span><i>→</i><span>PPTX</span></div>
+          <div class="route-grid"><div class="card green"><div class="route-label green">有 MCP</div><p>规划确认后，先做健康测试，再自动调用 image_mcp_demo 生图。</p></div><div class="card orange"><div class="route-label orange">没有 MCP</div><p>生成完整 Prompt Pack，复制到你选择的图片平台执行。</p></div></div>
+        </section>
+
+        <section id="职责">
+          <div class="section-head"><span class="section-index">02</span><h2>它负责什么，不负责什么</h2></div>
+          <div class="card-grid"><div class="card accent"><h3>输入</h3><p>支持 md、txt、html、pdf、pptx、截图或结构化需求。</p></div><div class="card green"><h3>规划</h3><p>拆解 content-brief、storyboard、global-visual-contract 和 prompt-pack。</p></div><div class="card orange"><h3>执行</h3><p>通过 MCP 或外部图片平台生成图片，随后制作 Contact Sheet、QA 和图片版 PPTX。</p></div></div>
+          <div class="callout"><span class="callout-mark">!</span><p>默认不生成可编辑文字版 PPT，不替代图片平台，也不会凭空补数据、产品功能、Logo 或品牌事实。</p></div>
+        </section>
+
+        <section id="安装">
+          <div class="section-head"><span class="section-index">03</span><h2>安装与开始调用</h2></div>
+          <p>在 Codex 中，把 Skill 项目放进：</p>
+          <div class="code-wrap"><button class="copy" type="button">复制</button><pre><code>~/.codex/skills/keynote-prompt-system/</code></pre></div>
+          <p>目录至少包含：</p>
+          <div class="code-wrap"><button class="copy" type="button">复制</button><pre><code>keynote-prompt-system/
+├── SKILL.md
+├── agents/openai.yaml
+└── references/</code></pre></div>
+          <div class="route-grid"><div><h3>在 Codex 中</h3><div class="code-wrap"><button class="copy" type="button">复制</button><pre><code>使用 $keynote-prompt-system。</code></pre></div></div><div><h3>没有 Codex</h3><p class="muted">图片平台不需要安装这个 Skill。让有 Codex 的人先生成 Prompt Pack，再复制到外部平台。</p></div></div>
+        </section>
+
+        <section id="产物">
+          <div class="section-head"><span class="section-index">04</span><h2>完整流程会产出什么</h2></div>
+          <table><thead><tr><th>文件</th><th>作用</th></tr></thead><tbody>
+            <tr><td><code>content-brief.md</code></td><td>产品事实、准确文案、叙事目标和数据来源</td></tr>
+            <tr><td><code>storyboard.md</code></td><td>每页核心信息、观众记忆、Page Type、视觉强弱和风险</td></tr>
+            <tr><td><code>global-visual-contract.md</code></td><td>全套共享视觉规则和唯一 <code>style_id</code></td></tr>
+            <tr><td><code>prompt-pack.md</code></td><td>每页完整 Prompt、Reference、调用方式和质量约束</td></tr>
+            <tr><td><code>execution-log.md</code></td><td>真实调用、Provider、Model、参数、输出和失败记录</td></tr>
+            <tr><td><code>qa/</code> 与 <code>deck-preview.pptx</code></td><td>Contact Sheet、QA 记录和整页图片版 PPTX</td></tr>
+          </tbody></table>
+        </section>
+
+        <section id="路线">
+          <div class="section-head"><span class="section-index">05</span><h2>两种生产路线</h2></div>
+          <div class="route-grid"><div class="card green"><h3>路线 A · 有 MCP</h3><p>规划确认 → 最小健康测试 → image_mcp_demo 生图 → Contact Sheet → QA → PPTX。</p></div><div class="card orange"><h3>路线 B · 没有 MCP</h3><p>规划确认 → Prompt Pack → 复制到 ChatGPT 图片、Midjourney、即梦、豆包、可灵等 → 下载图片 → Contact Sheet / QA → PPTX。</p></div></div>
+          <h3>外部平台的关键设置</h3>
+          <div class="card"><p><strong>无产品页：</strong>文生图，比例 16:9，尺寸按平台支持的 2K。</p><p><strong>有产品页：</strong>图生图或参考图生成，上传产品 Reference。</p><p><strong>多 Reference：</strong>分别说明每张图的用途，禁止直接拼贴。</p></div>
+        </section>
+
+        <section id="话术">
+          <div class="section-head"><span class="section-index">06</span><h2>只要某个流程时，怎么说</h2></div>
+          <div class="recipe-grid">
+            <div class="recipe"><strong>只做规划</strong><span>只生成 content-brief.md、storyboard.md、global-visual-contract.md、prompt-pack.md。不要调用图片工具。</span></div>
+            <div class="recipe"><strong>只要 Prompt</strong><span>只生成 prompt-pack.md。每页写清准确文字、Reference、上传方式、比例、尺寸、Must Preserve、Avoid 和检查项。</span></div>
+            <div class="recipe"><strong>只生成一页</strong><span>只生成第 03 页，不生成其他页面。使用完整 Prompt 和指定 Reference，不覆盖旧版本。</span></div>
+            <div class="recipe"><strong>只做 QA</strong><span>图片已经生成，请不要重新生成。只输出 Contact Sheet 和 qa.md，检查文字、产品、裁切、风格和多图质量。</span></div>
+            <div class="recipe"><strong>只封装 PPTX</strong><span>整页图片已经确认，请只封装图片版 PPTX。每页一张整页图片铺满，不添加原生文字。</span></div>
+            <div class="recipe"><strong>只修一页</strong><span>只修正第 05 页，不重跑整套。保持全局风格、准确文字、Reference、比例和尺寸，只改变一个明确问题。</span></div>
+          </div>
+        </section>
+
+        <section id="平台">
+          <div class="section-head"><span class="section-index">07</span><h2>外部图片平台怎么用</h2></div>
+          <div class="card-grid"><div class="card"><h3>无产品 Reference</h3><p>选择文生图，粘贴对应页面完整 Prompt。比例 16:9，尺寸使用平台支持的 2K，数量 1 张。</p></div><div class="card"><h3>有产品 Reference</h3><p>选择图生图或参考图生成，上传产品图。产品图只用于识别产品身份、结构和材质，不复制参考图背景。</p></div></div>
+          <h3>多 Reference 的写法</h3>
+          <div class="code-wrap"><button class="copy" type="button">复制</button><pre><code>Reference 1：上一页最终图
+用途：只继承布局、摄影尺度和视觉风格
+
+Reference 2：产品图
+用途：只识别产品身份、结构和材质
+
+禁止：把两张图拼贴到最终画面，复制参考图文字或错误容器。</code></pre></div>
+        </section>
+
+        <section id="qa">
+          <div class="section-head"><span class="section-index">08</span><h2>风格、Reference 与 QA</h2></div>
+          <p class="lead">风格只从 <code>references/style-presets.md</code> 选择，一个 Deck 只激活一个 <code>style_id</code>。</p>
+          <div class="card-grid"><div class="card"><h3>neutral-modern-home</h3><p>家用智能硬件、家庭陪伴、桌面智能屏。</p></div><div class="card"><h3>nordic-urban-family</h3><p>现代都市家庭、品质生活。</p></div><div class="card"><h3>lavender-premium-women</h3><p>女性消费、轻奢陪伴设备。</p></div><div class="card"><h3>young-urban-consumer-tech</h3><p>年轻消费电子、桌面设备。</p></div></div>
+          <div class="callout"><span class="callout-mark">✓</span><p><strong>QA 必查：</strong>标题和副标题、文字和数字、产品身份、产品裁切、真实承托、额外 Logo 或页码、跨页风格、多图质量、边框和容器错误。</p></div>
+          <div class="card orange"><h3>三条原则</h3><p>先规划，再确认。产品页必须有 Reference。问题页定点重生，不默认全套重跑。</p></div>
+        </section>
+
+        <footer class="footer"><span>Keynote Prompt System · v0.9</span><a href="#top">回到顶部</a></footer>
+      </main>
+    </div>
+  </div>
+  <script>
+    const root = document.documentElement;
+    const themeButton = document.querySelector('.theme-toggle');
+    themeButton.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      localStorage.setItem('kps-theme', next);
+    });
+    const saved = localStorage.getItem('kps-theme');
+    if (saved) root.dataset.theme = saved;
+    document.querySelectorAll('.copy').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const code = button.parentElement.querySelector('code').innerText;
+        await navigator.clipboard.writeText(code);
+        const label = button.innerText;
+        button.innerText = '已复制';
+        setTimeout(() => button.innerText = label, 1200);
+      });
+    });
+  </script>
+</body>
+</html>
