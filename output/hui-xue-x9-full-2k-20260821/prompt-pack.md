@@ -1,5 +1,7 @@
 # 慧雪 X9 Ultra｜13 页新版 Image2 Prompt Pack
 
+> **已废弃，不得用于生图调用。** 本文件来自旧版简化 Prompt 结构，未完整注入新版 Storyboard 字段。前 5 页审核请使用 `prompt-pack-first5-review-v2.md`；用户确认后再编译正式全套 Prompt Pack。
+
 > 本轮按当前 keynote-prompt-system v0.9 流程执行；HTML 全部内容页保留，PPTX p10-11 替换 HTML 占位页。
 
 ## 调用配置
