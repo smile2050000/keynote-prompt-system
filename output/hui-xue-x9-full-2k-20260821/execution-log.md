@@ -99,3 +99,51 @@
 |05|`edit_image`|`P0-01.png`，右前 3/4|`generated-first5-v3/2026-08-21T08-26-11-789Z-生成一张完整的-16-9-中文发布会-ppt-页面-当前使用-image2-整页生图-1.png`|
 
 - Contact Sheet：`contact-sheet-first5-v3.png`
+
+## 第 01 页执行优化版单页测试（2026-08-24）
+
+- Prompt：`prompt-page01-execution-optimized-v1.md`
+- Tool：`mcp__image_mcp_demo__edit_image`
+- Provider / model：成功结果均为 `T8Star / gpt-image-2`
+- Reference：`P0-01.png`，右前 3/4
+- 参数：`editMode=reimagine`、`strength=medium`、`16:9`、`2K`、`2048×1152`
+- 首轮并行 3 次：2 次成功，1 次真实错误 `mcp_workspace_route_unavailable`
+- 同参数补试：成功，补齐第 3 张
+- 输出目录：`generated-page01-optimized-v1/`
+- Contact Sheet：`contact-sheet-page01-optimized-v1-3x.png`
+- 初步观察：三张图的产品完整度、标题留白和摄影清晰度较稳定；木质桌面/柜体仍有模型默认倾向，说明单页执行优化版提升了优先级，但没有完全改变家庭空间材质先验。
+
+## 第 01 页执行优化版 v2 三方向测试（2026-08-24）
+
+- Prompt：`prompt-page01-execution-optimized-v2-options.md`
+- Tool：`mcp__image_mcp_demo__edit_image`
+- Provider / model：成功结果均为 `T8Star / gpt-image-2`
+- Reference：`P0-01.png`，右前 3/4
+- 参数：`editMode=reimagine`、`strength=medium`、`16:9`、`2K`、`2048×1152`
+- A、B 首轮成功；C 首轮真实错误：`mcp_upstream_connection_failed`（未收到上游 HTTP 响应），使用相同参数重试成功。
+- 输出目录：`generated-page01-options-v2/`
+- Contact Sheet：`contact-sheet-page01-options-v2.png`
+
+## 执行优化层修订：连续标题背景（2026-08-24）
+
+- 已同步更新 `prompt-page01-execution-optimized-v1.md` 与 `prompt-page01-execution-optimized-v2-options.md`。
+- 新增约束：标题区与室内场景使用同一连续背景；标题直接叠加，不生成白色横条、标题底板、不透明色块、圆角白色卡片、页面外框或黑色外部背景。
+- 本次只处理标题背景/画布连续性，未修改摄影、室内设计、人物脚本、产品 Reference 或调用参数。
+- 尚未重新生图，等待下一轮摄影方向讨论后再测试。
+
+## 第 01 页 B/C 版本 4K 测试（2026-08-24）
+
+- Prompt：`prompt-page01-execution-optimized-v2-options.md` 的 B、C 版本。
+- Tool：`mcp__image_mcp_demo__edit_image`
+- Provider / model：`T8Star / gpt-image-2`
+- Reference：`P0-01.png`，右前 3/4
+- 参数：`editMode=reimagine`、`strength=medium`、`16:9`、`preset=4k`
+- 实际返回尺寸：B、C 均为 `3072×1728`，不是请求文本中的 `4096×2304`；按 MCP 实际返回记录。
+- 输出目录：`generated-page01-options-v2-4k/`
+- Contact Sheet：`contact-sheet-page01-options-v2-4k.png`
+
+## 执行方向确认（2026-08-24）
+
+- 用户选定：B｜广告强化版。
+- 后续生图与 Prompt 编译暂以 B 的商业摄影和高端科技住宅方向为基线。
+- 暂不自动扩展到全套页面，也不混入 C 的逐条脚本强化规则。
