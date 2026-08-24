@@ -12,7 +12,7 @@ PPT 需求 → 内容简报 → Storyboard → 全局视觉规则 → 逐页 Pro
 
 它负责梳理叙事、准确文案、页面任务、整套视觉风格、逐页图片 Prompt、Reference 路由和 QA 规则。
 
-它不绑定某一个图片生成平台。MCP 只是可选的自动生图通道；没有 MCP 也可以完整使用规划和 Prompt 生成能力。
+v0.9.3 的正式生产路径固定为 `image_mcp_demo` + Image2 整页生图。没有 MCP 时仍可以使用规划和 Prompt 导出能力，但复制到外部图片平台属于“人工适配兼容模式”，不属于正式生产路径，也不保证与 MCP 结果一致。
 
 ## 2. 两种使用方式
 
@@ -22,13 +22,13 @@ PPT 需求 → 内容简报 → Storyboard → 全局视觉规则 → 逐页 Pro
 Skill 规划 → MCP 健康测试 → 自动生成图片 → Contact Sheet → QA → PPTX
 ```
 
-### 没有 MCP
+### 没有 MCP：兼容导出模式
 
 ```text
 Skill 规划 → 生成 Prompt Pack → 复制到外部图片平台 → 下载图片 → Contact Sheet / QA → PPTX
 ```
 
-外部平台可以是 ChatGPT 图片、Midjourney、即梦、豆包、可灵、通义万相、Stable Diffusion 等。
+外部平台可以是 ChatGPT 图片、Midjourney、即梦、豆包、可灵、通义万相、Stable Diffusion 等。该模式只负责导出可适配的 Prompt，不承诺相同模型、参数、Reference 路由或像素级结果。
 
 > Skill 负责把需求想清楚、写清楚；图片平台负责生成图片。
 
@@ -51,11 +51,13 @@ keynote-prompt-system/
 └── references/
 ```
 
-当前项目目录：
+当前项目目录示例：
 
 ```text
 /Users/smile/Documents/ChatGPT/image2 版本/keynote-prompt-system-v0.9
 ```
+
+团队安装时以实际加载目录为准：`$CODEX_HOME/skills/keynote-prompt-system/`。
 
 调用：
 
@@ -143,7 +145,7 @@ Prompt 必须可以直接复制到外部图片平台使用。
 - 生成后检查项。
 ```
 
-## 6. 外部图片平台的用法
+## 6. 外部图片平台的用法（仅兼容导出模式）
 
 ### 无产品 Reference
 
@@ -190,7 +192,7 @@ Reference 2：产品图
 
 ```text
 只生成 storyboard.md。
-每页记录 Core Message、Audience Memory、Page Type、Visual Strength 和 Special Risk。
+每页按 `references/prompt-schema.md` 的分组模板记录内容任务、视觉关系、产品约束和风险字段。
 不要调用生图工具。
 ```
 
@@ -287,6 +289,17 @@ style_mix: forbidden
 
 ### QA 格式
 
+先建立全页验收账本，证明每页都完成文字/数字、产品/Reference、Global Visual Contract 和 Storyboard 关系检查：
+
+```markdown
+| Page | Text/Digits | Product/Ref | Contract | Storyboard | Status |
+|---|---|---|---|---|---|
+| 01 | PASS | N/A | PASS | PASS | Approved |
+| 02 | PASS | PASS | PASS | PASS | Approved |
+```
+
+问题页再使用以下表格记录处理动作：
+
 ```markdown
 | Page | Issue | Action |
 |---|---|---|
@@ -294,16 +307,18 @@ style_mix: forbidden
 | 05 | 产品落在地面 | 只重生第 05 页，改为桌面承托 |
 ```
 
+同一页面连续两次定点重生仍未通过关键文字、数字、产品身份或核心关系检查时，标记为 `Blocked`，等待用户确认或转下游可编辑 PPT 重建；不无限重生、不静默切换通道。
+
 ## 10. 团队协作
 
 可以拆成四步：
 
 1. 需求整理：`content-brief.md`、`storyboard.md`
 2. 视觉规划：`global-visual-contract.md`、`prompt-pack.md`
-3. 图片生成：MCP 或外部图片平台
+3. 图片生成：正式生产使用 `image_mcp_demo`；无 MCP 时使用兼容导出模式
 4. QA 和交付：Contact Sheet、`qa.md`、PPTX
 
-这样团队成员可以使用不同图片平台，但共享同一套内容、风格、Prompt 和质量标准。
+这样团队成员可以共享同一套内容、风格、Prompt 和质量标准；只有正式 MCP 路径才属于 v0.9.3 的可比生产结果。
 
 ## 11. 一句话记忆
 
@@ -319,4 +334,4 @@ style_mix: forbidden
 规划 → Prompt Pack → 外部平台生图 → 下载图片 → Contact Sheet → QA → PPTX
 ```
 
-> `keynote-prompt-system` 不等于某个图片生成平台；它负责把 PPT 需求变成可复用、可检查、可交接的视觉生产流程。
+> 上述“没有 MCP”路径是兼容导出模式，不是 v0.9.3 正式生产路径。

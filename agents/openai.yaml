@@ -1,6 +1,6 @@
 interface:
   display_name: "演示文稿提示词系统"
   short_description: "把PPT需求整理成设计规范和生图提示词"
-  default_prompt: "使用 $keynote-prompt-system，把这份PPT需求整理为内容简报、设计系统和逐页 Image2 提示词。"
+  default_prompt: "使用 $keynote-prompt-system，把这份 PPT 需求整理为 content-brief.md、storyboard.md、global-visual-contract.md 和 prompt-pack.md；先完成规划，等待确认后再按 v0.9.3 的 Image2 / image_mcp_demo 正式生产流程执行。"
 policy:
   allow_implicit_invocation: true

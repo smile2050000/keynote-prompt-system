@@ -1,6 +1,6 @@
 ---
 name: keynote-prompt-system
-description: 将 txt、md、html、docx、pdf、pptx、截图等单一主要需求整理为整套 PPT Deck Plan、精简视觉系统和逐页 Image2 Prompt；用户确认后可调用 Image2 生成视觉稿并制作整套预览。
+description: Use when a PPT requirement needs structured content planning, storyboard, shared visual rules, and page-level Image2 prompts before visual generation.
 ---
 
 # Keynote Prompt System V1
@@ -18,7 +18,7 @@ description: 将 txt、md、html、docx、pdf、pptx、截图等单一主要需�
 
 - `execution-log.md`：真实调用、结果和定点重生记录；
 - `qa/contact-sheet-pass-01.png`：首轮全部页面的 Contact Sheet；
-- `qa/qa.md`：只记录明显问题及逐页处理动作；
+- `qa/qa.md`：全页验收账本，以及只针对问题页的处理动作；
 - `qa/contact-sheet-final.png`：问题页修正后的整套复查图；
 - `deck-preview.pptx`：可选下游预览文件，由 `slides` / `ppt` Skill 在用户明确需要时封装。
 
@@ -100,7 +100,7 @@ Global Visual Contract（每页完整原样注入）
 
 ### 8. Contact Sheet 与 QA
 
-首轮生成完成后，先制作包含全部页面和页码的 `qa/contact-sheet-pass-01.png`，再创建 `qa/qa.md`。QA 只记录用户可见的明显问题：
+首轮生成完成后，先制作包含全部页面和页码的 `qa/contact-sheet-pass-01.png`，再创建 `qa/qa.md`。QA 重点记录用户可见的明显问题；全页验收账本仍需覆盖所有页面：
 
 - 风格漂移或跨页产品表现不一致；
 - 构图明显重复或标题层级异常；
@@ -108,9 +108,14 @@ Global Visual Contract（每页完整原样注入）
 - 文字、数字、产品身份、裁切或结构错误；
 - 信息页的视觉关系没有解释内容。
 
-`qa.md` 按 `Page / Issue / Action` 记录，只列问题页；无明显问题的页面不制造修改任务。每个 Action 写清本次改变和必须保持不变的部分。
+`qa.md` 包含两部分：
+
+1. 全页验收账本：每页记录文字/数字、产品/Reference、Global Visual Contract、Storyboard 关系和总体状态；通过项写 `PASS` 或 `N/A`，不制造修改任务。
+2. 问题页表：按 `Page / Issue / Action` 记录，只列需要处理的页面。每个 Action 写清本次改变和必须保持不变的部分。
 
 只重生问题页，不全套重跑。重生文件使用新版本名，不覆盖首轮结果；真实 Prompt、Reference、参数、输出路径和结果继续写入 `execution-log.md`。问题页修正后更新 `qa/contact-sheet-final.png`，再检查一次整套上下文。只有同一问题跨多页出现并证明来自共享规则时，才考虑修改 Global Visual Contract；修改共享规则可能影响全套，必须先向用户说明。
+
+同一页面连续两次定点重生后，若准确文字、关键数字、产品身份或核心视觉关系仍然错误，则停止继续生图，将页面标记为 `Blocked`，等待用户确认或交给下游可编辑 PPT 重建；不得无限重生，也不得静默切换模型、通道或生产模式。
 
 ### 9. 可编辑重建接口
 
@@ -119,7 +124,7 @@ Global Visual Contract（每页完整原样注入）
 ## 核心边界
 
 - 一个 Deck 只激活一个 Style Preset。
-- 家庭浅色方向默认使用 `neutral-modern-home`：中性白灰为主，木色只作材质点缀，清洁自然日光与中性灰阴影；温馨由人物行为、产品作用和家庭关系表达，不使用黄色滤镜、黄金时刻或昏黄灯光。
+- 家庭浅色方向默认使用 canonical ID `neutral-modern-home`：中性白灰为主，木色只作材质点缀，清洁自然日光与中性灰阴影；旧别名 `neutral-home-keynote` 继续兼容，温馨由人物行为、产品作用和家庭关系表达，不使用黄色滤镜、黄金时刻或昏黄灯光。
 - 标题结构默认上方居中，其他结构必须由内容关系触发。
 - Style Lock 只锁定品牌气质、色彩、字体角色、材质和产品保真，不锁定所有页面使用同一版式。
 - Typography 使用现代无衬线字体；文字颜色按背景反差选择，不使用彩色标题。

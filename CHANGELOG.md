@@ -1,5 +1,13 @@
 # 更新记录
 
+## v0.9.3 发布一致性修正 - 2026-08-24
+
+- 正式生产路径固定为 `image_mcp_demo` + Image2；外部平台保留为人工适配兼容模式，不再与正式结果混称。
+- 更新默认触发入口，明确先生成 `content-brief.md`、`storyboard.md`、`global-visual-contract.md` 和 `prompt-pack.md`。
+- QA 增加全页验收账本；问题页仍单独记录 `Page / Issue / Action`。
+- 增加同一页面连续两次定点重生仍失败时的 `Blocked` 升级规则，不无限重生、不静默换通道。
+- 统一 v0.9.3 术语、canonical 风格 ID 和团队路径表达，保留旧风格别名兼容。
+
 ## v0.9.3 - 2026-08-21
 
 - Storyboard 从基础摘要扩展为内容任务、视觉关系、产品约束和风险分组，关键字段必须在生成前真实落盘。
